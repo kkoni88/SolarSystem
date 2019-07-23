@@ -23,17 +23,20 @@ public class MainActivity extends AppCompatActivity {
 
         final TextView statusTV = (TextView) findViewById(R.id.status);
         String apiKey = getResources().getString(R.string.solar_api_key);
-        String siteDetailsUrl = String.format("https://monitoringapi.solaredge.com/site/1204115/details?api_key=%s", apiKey);
+        String siteId = getResources().getString(R.string.solar_site_id);
 
+        String siteDetailsUrl =
+                String.format("https://monitoringapi.solaredge.com/site/%s/details?api_key=%s", siteId, apiKey);
+        String sitePowerBulk = getResources().getString(R.string.solar_sitePowerBulk);
 
 
         Runnable runnable = () -> {
             RequestQueue queue = Volley.newRequestQueue(this);
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, siteDetailsUrl,
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, sitePowerBulk,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            statusTV.setText("Response is: " + response.substring(0, 500));
+                            statusTV.setText(response);
                         }
                     }, new Response.ErrorListener() {
 
