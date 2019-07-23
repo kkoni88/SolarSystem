@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
     tools:context=".MainActivity">
 
 
     <ImageView
-        android:id="@+id/oaktree"
+        android:id="@+id/solar_pic"
         android:layout_width="288dp"
         android:layout_height="521dp"
         android:layout_marginStart="8dp"
@@ -17,17 +18,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/oaktree" />
+        android:visibility="visible"
+        app:srcCompat="@drawable/solar" />
 
     <TextView
         android:id="@+id/status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="20dp"
-        android:text="TextView"
+        android:layout_marginEnd="8dp"
+        android:text=""
+        android:textColor="@color/statusTextColor"
+        android:textSize="10pt"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/oaktree" />
+        app:layout_constraintTop_toBottomOf="@+id/solar_pic" />
 </android.support.constraint.ConstraintLayout>
