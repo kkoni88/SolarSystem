@@ -1,4 +1,4 @@
-package com.kkoni88.solarsystemapp;
+package com.kkoni88.solarsystemapp.queries;
 
 import android.icu.text.SimpleDateFormat;
 
