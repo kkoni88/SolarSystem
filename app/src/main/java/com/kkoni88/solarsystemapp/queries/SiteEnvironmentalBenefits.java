@@ -1,7 +1,6 @@
 package com.kkoni88.solarsystemapp.queries;
 
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -12,16 +11,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.kkoni88.solarsystemapp.R;
 
-import java.util.concurrent.CountDownLatch;
-
-import okhttp3.HttpUrl;
-
-public class SiteEnvironmentalBenefits extends AsyncTask<Void, Void, Void> {
-    private Activity activity;
-
-    String result = "";
-    CountDownLatch countDownLatch = new CountDownLatch(1);
-
+public class SiteEnvironmentalBenefits extends AbstractQueryAsyncTask {
     String co2Saved;
     String so2Saved;
     String noxSaved;
@@ -29,19 +19,15 @@ public class SiteEnvironmentalBenefits extends AsyncTask<Void, Void, Void> {
     String lightBulbs;
 
     public SiteEnvironmentalBenefits(Activity activity) {
-        super();
+        super(activity);
         this.activity = activity;
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
 
-        String url = new HttpUrl.Builder()
-                .scheme(activity.getResources().getString(R.string.solar_monitoring_api_scheme))
-                .host(activity.getResources().getString(R.string.solar_monitoring_api_host))
-                .addPathSegments(activity.getResources().getString(R.string.solar_monitoring_api_path_site))
+        String url = urlBuilder
                 .addPathSegment("envBenefits")
-                .addQueryParameter("api_key", activity.getResources().getString(R.string.solar_api_key))
                 .build().toString();
 
 
@@ -66,7 +52,7 @@ public class SiteEnvironmentalBenefits extends AsyncTask<Void, Void, Void> {
                     countDownLatch.countDown();
 
                 }, (error) -> {
-            result = error.getLocalizedMessage();
+            queryResult = error.getLocalizedMessage();
             countDownLatch.countDown();
 
         });

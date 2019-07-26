@@ -1,7 +1,6 @@
 package com.kkoni88.solarsystemapp.queries;
 
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -12,37 +11,39 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.kkoni88.solarsystemapp.R;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Date;
-import java.util.concurrent.CountDownLatch;
 
-import okhttp3.HttpUrl;
-
-public class DailySiteEnergy extends AsyncTask<String, Void, String> {
-    private Activity activity;
-
-    String result = "";
-    CountDownLatch countDownLatch = new CountDownLatch(1);
-
+public class DailySiteEnergy extends AbstractQueryAsyncTask {
     public DailySiteEnergy(Activity activity) {
-        super();
-        this.activity = activity;
+        super(activity);
     }
 
     @Override
-    protected String doInBackground(String... strings) {
+    protected Void doInBackground(Void... voids) {
 
-//            LocalDateTime localDateTime = LocalDateTime.now().minusDays(7);
-//            Date weekBefore = Date.from( localDateTime.atZone( ZoneId.systemDefault()).toInstant());
+            LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
+        Date dayBefore = Date.from( localDateTime.atZone( ZoneId.systemDefault()).toInstant());
+
+        LocalDate yesterday = LocalDate.now();
+        yesterday.minusDays(1);
+
         Date date = new Date();
+        DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();
+       // DateTimeFormatter FOMATTER = DateTimeFormatter.ofPattern("yyyy-mm/dd% 'at' hh:mm a z");
 
-        String url = new HttpUrl.Builder()
-                .scheme(activity.getResources().getString(R.string.solar_monitoring_api_scheme))
-                .host(activity.getResources().getString(R.string.solar_monitoring_api_host))
-                .addPathSegments(activity.getResources().getString(R.string.solar_monitoring_api_path_site))
+      //  LocalDate localDate = LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse(localDateTime.toString()));
+
+        String url = urlBuilder
                 .addPathSegment("energyDetails")
-                .addQueryParameter("api_key", activity.getResources().getString(R.string.solar_api_key))
-                .addQueryParameter("startTime", SolarHelper.getDateAndTime(date, "00:00"))
-                .addQueryParameter("endTime", SolarHelper.getDateAndTime(date, "23:59"))
+                .addQueryParameter("startTime", SolarHelper.getZonedDate(ZonedDateTime.now()))
+//                .addQueryParameter("startTime", SolarHelper.getZonedDate(ZonedDateTime.now().minusDays(1)))
+                .addQueryParameter("endTime", SolarHelper.getZonedDateTime(ZonedDateTime.now()))
+//                .addQueryParameter("endTime", SolarHelper.getZonedDateTime(ZonedDateTime.now().minusDays(1)))
                 .addQueryParameter("timeUnit", "DAY")
                 .build().toString();
 
@@ -59,11 +60,11 @@ public class DailySiteEnergy extends AsyncTask<String, Void, String> {
                                     .get("values").getAsJsonArray()
                                     .get(0).getAsJsonObject()
                                     .get("value").getAsString();
-                    result = generatedPower;
+                    queryResult = generatedPower;
                     countDownLatch.countDown();
 
                 }, (error) -> {
-            result = error.getLocalizedMessage();
+            queryResult = error.getLocalizedMessage();
             countDownLatch.countDown();
 
         });
@@ -73,14 +74,14 @@ public class DailySiteEnergy extends AsyncTask<String, Void, String> {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return result;
+        return null;
     }
 
     @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
 
         final TextView statusTV = activity.findViewById(R.id.status);
-        statusTV.setText(String.format("A ma megtermelt áram: %s Wh", result));
+        statusTV.setText(String.format("A ma megtermelt áram: %s Wh", queryResult));
     }
 }
