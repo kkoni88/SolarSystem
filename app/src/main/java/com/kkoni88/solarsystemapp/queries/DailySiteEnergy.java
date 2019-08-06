@@ -11,6 +11,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.kkoni88.solarsystemapp.R;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -26,17 +28,17 @@ public class DailySiteEnergy extends AbstractQueryAsyncTask {
     @Override
     protected Void doInBackground(Void... voids) {
 
-            LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
-        Date dayBefore = Date.from( localDateTime.atZone( ZoneId.systemDefault()).toInstant());
+        LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
+        Date dayBefore = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 
         LocalDate yesterday = LocalDate.now();
         yesterday.minusDays(1);
 
         Date date = new Date();
         DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();
-       // DateTimeFormatter FOMATTER = DateTimeFormatter.ofPattern("yyyy-mm/dd% 'at' hh:mm a z");
+        // DateTimeFormatter FOMATTER = DateTimeFormatter.ofPattern("yyyy-mm/dd% 'at' hh:mm a z");
 
-      //  LocalDate localDate = LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse(localDateTime.toString()));
+        //  LocalDate localDate = LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse(localDateTime.toString()));
 
         String url = urlBuilder
                 .addPathSegment("energyDetails")
@@ -82,6 +84,8 @@ public class DailySiteEnergy extends AbstractQueryAsyncTask {
         super.onPostExecute(aVoid);
 
         final TextView statusTV = activity.findViewById(R.id.status);
-        statusTV.setText(String.format("A ma megtermelt áram: %s Wh", queryResult));
+        float queryResultFloat = Float.parseFloat(queryResult) / 1000;
+        BigDecimal bigDecimal = new BigDecimal(queryResultFloat).setScale(2, RoundingMode.HALF_UP);
+        statusTV.setText(String.format("A ma megtermelt áram: %s kWh", bigDecimal.doubleValue()));
     }
 }

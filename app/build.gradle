@@ -15,12 +15,18 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+            minifyEnabled false
+
+        }
     }
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
 }
+
 
 dependencies {
     implementation 'com.android.volley:volley:1.1.1'
@@ -32,5 +38,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.7'
+    implementation 'com.android.support:design:27.1.1'
 
 }
