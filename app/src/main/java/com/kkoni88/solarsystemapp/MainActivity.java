@@ -1,6 +1,8 @@
 package com.kkoni88.solarsystemapp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -12,6 +14,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.kkoni88.solarsystemapp.queries.DailySiteEnergy;
@@ -42,8 +46,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         new SiteAddress(this, (Object siteAddress) -> {
             String siteAddressStr = (String) siteAddress;
             LatLng siteLng = getLocationFromAddress(this, siteAddressStr);
+
+            Bitmap sunBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sun);
+            BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(sunBitmap);
+
             gmap.addMarker(new MarkerOptions().position(siteLng)
-                    .title(getString(R.string.google_maps_location_marker)));
+                    .title(getString(R.string.google_maps_location_marker))
+                    .icon(bitmapDescriptor)
+            );
             gmap.moveCamera(CameraUpdateFactory.newLatLng(siteLng));
         }).execute();
 
