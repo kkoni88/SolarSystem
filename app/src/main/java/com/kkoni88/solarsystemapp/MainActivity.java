@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gmap = googleMap;
-        gmap.setMinZoomPreference(16);
+        gmap.setMinZoomPreference(11);
+        gmap.setMaxZoomPreference(16);
     }
 }

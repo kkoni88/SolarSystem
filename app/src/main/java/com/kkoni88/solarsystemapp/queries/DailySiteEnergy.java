@@ -55,14 +55,21 @@ public class DailySiteEnergy extends AbstractQueryAsyncTask {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 (response) -> {
                     JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
-                    String generatedPower =
-                            jsonObject.get("energyDetails").getAsJsonObject()
-                                    .get("meters").getAsJsonArray()
-                                    .get(0).getAsJsonObject()
-                                    .get("values").getAsJsonArray()
-                                    .get(0).getAsJsonObject()
-                                    .get("value").getAsString();
-                    queryResult = generatedPower;
+
+                    boolean hasValue = jsonObject.get("energyDetails").getAsJsonObject().get("meters").getAsJsonArray().get(0).getAsJsonObject().get("values").getAsJsonArray().get(0).getAsJsonObject().has("value");
+
+                    if (hasValue) {
+                        String generatedPower =
+                                jsonObject.get("energyDetails").getAsJsonObject()
+                                        .get("meters").getAsJsonArray()
+                                        .get(0).getAsJsonObject()
+                                        .get("values").getAsJsonArray()
+                                        .get(0).getAsJsonObject()
+                                        .get("value").getAsString();
+
+                        queryResult = generatedPower;
+
+                    }
                     countDownLatch.countDown();
 
                 }, (error) -> {
@@ -83,9 +90,12 @@ public class DailySiteEnergy extends AbstractQueryAsyncTask {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
 
-        final TextView statusTV = activity.findViewById(R.id.status);
-        float queryResultFloat = Float.parseFloat(queryResult) / 1000;
-        BigDecimal bigDecimal = new BigDecimal(queryResultFloat).setScale(2, RoundingMode.HALF_UP);
-        statusTV.setText(String.format("A ma megtermelt áram: %s kWh", bigDecimal.doubleValue()));
+        if (queryResult.length() > 0) {
+
+            final TextView statusTV = activity.findViewById(R.id.status);
+            float queryResultFloat = Float.parseFloat(queryResult) / 1000;
+            BigDecimal bigDecimal = new BigDecimal(queryResultFloat).setScale(2, RoundingMode.HALF_UP);
+            statusTV.setText(String.format("A ma megtermelt áram: %s kWh", bigDecimal.doubleValue()));
+        }
     }
 }
